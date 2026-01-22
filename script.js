@@ -1,14 +1,31 @@
 const carousel = document.querySelector('.carousel');
 const panels = document.querySelectorAll('.panel');
-const total = panels.length;
-let angle = 0;
+const totalPanels = panels.length;
 
-document.getElementById('next').onclick = () => {
-  angle -= 360 / total;
-  carousel.style.transform = `rotateY(${angle}deg)`;
-};
+let currentIndex = 0;
+let isScrolling = false;
 
-document.getElementById('prev').onclick = () => {
-  angle += 360 / total;
-  carousel.style.transform = `rotateY(${angle}deg)`;
-};
+function rotateCarousel() {
+  const angle = 360 / totalPanels;
+  carousel.style.transform = `rotateY(${-currentIndex * angle}deg)`;
+}
+
+window.addEventListener('wheel', (event) => {
+  if (isScrolling) return;
+
+  isScrolling = true;
+
+  if (event.deltaY > 0) {
+    // Scroll down → next
+    currentIndex = (currentIndex + 1) % totalPanels;
+  } else {
+    // Scroll up → previous
+    currentIndex = (currentIndex - 1 + totalPanels) % totalPanels;
+  }
+
+  rotateCarousel();
+
+  setTimeout(() => {
+    isScrolling = false;
+  }, 900);
+});
